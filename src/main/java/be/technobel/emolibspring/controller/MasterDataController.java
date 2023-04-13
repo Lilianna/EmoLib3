@@ -1,7 +1,6 @@
 package be.technobel.emolibspring.controller;
 
 import be.technobel.emolibspring.constants.StatusRoomEnum;
-import be.technobel.emolibspring.constants.UserTypeEnum;
 import be.technobel.emolibspring.helper.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

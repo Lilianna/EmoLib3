@@ -7,7 +7,6 @@ import be.technobel.emolibspring.model.form.reservation.CreateReservationForm;
 import be.technobel.emolibspring.model.form.reservation.ResponseReservationForm;
 import be.technobel.emolibspring.service.impl.BookServiceImpl;
 import be.technobel.emolibspring.service.impl.ReservationServiceImpl;
-import be.technobel.emolibspring.service.impl.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
