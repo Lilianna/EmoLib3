@@ -2,13 +2,17 @@ package be.technobel.emolibspring.model.entity;
 
 import be.technobel.emolibspring.helper.CommonService;
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "categories")
+@Data
 public class CategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,9 +25,28 @@ public class CategoryEntity {
     @Column(name = "slug")
     private String slug;
 
-    @Column(name = "created_at")
-    @CreationTimestamp
-    private Date dateCreated;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "category")
+    private Set<BookEntity> bookEntitys;
+
+    public void add(BookEntity bookEntity) {
+        if(bookEntity!=null) {
+            if (bookEntitys==null) {
+                bookEntitys= new HashSet<>();
+            }
+        }
+
+        bookEntitys.add(bookEntity);
+        bookEntity.setCategory(this);
+    }
+
+    @Column(name = "date_create")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateCreate;
+
+    @PrePersist
+    public void prePersist() {
+        this.dateCreate = new Date();
+    }
     @Column(name = "updated_at")
     @UpdateTimestamp
     private Date updatedAt;

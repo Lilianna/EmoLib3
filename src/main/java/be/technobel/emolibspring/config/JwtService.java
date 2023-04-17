@@ -76,6 +76,12 @@ public class JwtService {
                 .getBody();
     }
 
+    public Long getIdUser(String token){
+        String sub = token.substring(7);
+        Claims claims = extractAllClaims(sub);
+        return claims.get("id", Long.class);
+    }
+
     //Phương thức này được sử dụng để lấy khóa ký để giải mã hoặc ký một chuỗi JWT.
     private Key getSignInkey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);

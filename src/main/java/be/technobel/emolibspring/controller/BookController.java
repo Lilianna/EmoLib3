@@ -1,16 +1,21 @@
 package be.technobel.emolibspring.controller;
 
 import be.technobel.emolibspring.helper.Response;
+import be.technobel.emolibspring.model.entity.AuthorEntity;
 import be.technobel.emolibspring.model.entity.BookEntity;
+import be.technobel.emolibspring.model.entity.CategoryEntity;
 import be.technobel.emolibspring.model.form.reservation.CreateBookForm;
+import be.technobel.emolibspring.repository.AuthorRepository;
 import be.technobel.emolibspring.service.BookService;
-import be.technobel.emolibspring.service.BookingService;
-import be.technobel.emolibspring.service.impl.BookingServiceImpl;
+import be.technobel.emolibspring.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -20,11 +25,8 @@ import java.util.Optional;
 public class BookController {
 
     private final BookService bookService;
-
-//    public BookController(BookService bookService) {
-//        this.bookService = bookService;
-//    }
-
+    private final CategoryService categoryService;
+    private final AuthorRepository authorRepository;
 
     @GetMapping("")
     public ResponseEntity getListBook() {
@@ -33,23 +35,33 @@ public class BookController {
 
     @PostMapping("/create")
     public ResponseEntity createBook(@RequestBody CreateBookForm createBookForm) {
+        Optional<CategoryEntity> category = categoryService.findById(createBookForm.getCategoryId());
+        if(!category.isPresent()) {
+            return Response.setResponse(false, HttpStatus.NOT_FOUND, null);
+        }
         BookEntity bookEntity = new BookEntity(
                 createBookForm.getIbsn(),
                 createBookForm.getTitle(),
-                createBookForm.getAuthorId(),
+                new HashSet<>(),
                 createBookForm.getSubject(),
                 createBookForm.getYearb(),
                 createBookForm.getPages(),
                 createBookForm.getCopies(),
                 createBookForm.getIsIssued(),
-                createBookForm.getCategoryId()
+                category.get()
         );
-        System.out.println(createBookForm.getAuthorId() +
-                createBookForm.getCategoryId());
+        for (Long id : createBookForm.getAuthors()) {
+            AuthorEntity author = authorRepository.findById(id).orElseThrow();
+            bookEntity.getAuthors().add(author);
+        }
         Optional<BookEntity> bookingInfo = Optional.ofNullable(bookService.create(bookEntity));
         return Response.setResponse(true, HttpStatus.OK, bookingInfo);
     }
 
+    @GetMapping("/myBooks")
+    public String getMyBooks(){
+        return "myBooks";
+    }
     @GetMapping("/{slug}")
     public ResponseEntity getDetail(@PathVariable String slug) {
         Optional<BookEntity> bookingInfo = bookService.getBookBySlug(slug);
@@ -58,21 +70,26 @@ public class BookController {
 
     @PutMapping("/{bookId}")
     public ResponseEntity update(@PathVariable Long bookId, @RequestBody CreateBookForm createBookForm) {
+        Optional<CategoryEntity> category = categoryService.findById(createBookForm.getCategoryId());
         Optional<BookEntity> optional = bookService.findById(bookId);
-        if (optional.isPresent()) {
-            BookEntity bookingEntity = new BookEntity(
+        if (optional.isPresent() && category.isPresent()) {
+            BookEntity bookEntity = new BookEntity(
                     createBookForm.getIbsn(),
                     createBookForm.getTitle(),
-                    createBookForm.getAuthorId(),
+                    new HashSet<>(),
                     createBookForm.getSubject(),
                     createBookForm.getYearb(),
                     createBookForm.getPages(),
                     createBookForm.getCopies(),
                     createBookForm.getIsIssued(),
-                    createBookForm.getCategoryId()
+                    category.get()
             );
+            for (Long id : createBookForm.getAuthors()) {
+                AuthorEntity author = authorRepository.findById(id).orElseThrow();
+                bookEntity.getAuthors().add(author);
+            }
             BookEntity bookingInfo = optional.get();
-            bookService.update(bookingInfo.getId(), bookingEntity);
+            bookService.update(bookingInfo.getId(), bookEntity);
             return Response.setResponse(true, HttpStatus.OK, bookingInfo);
         }
         return Response.setResponse(false, HttpStatus.NOT_FOUND, null);

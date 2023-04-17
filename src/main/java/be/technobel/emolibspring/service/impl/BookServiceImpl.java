@@ -32,17 +32,8 @@ public class BookServiceImpl implements BookService {
     public BookEntity update(Long id, BookEntity bookEntity) {
         Optional<BookEntity> entity = bookRepository.findById(id);
         if (entity.isPresent()) {
-            entity.get().setIbsn(bookEntity.getIbsn());
-            entity.get().setTitle(bookEntity.getTitle());
-            entity.get().setAuthor(bookEntity.getAuthor());
-            entity.get().setSubject(bookEntity.getSubject());
-            entity.get().setYearb(bookEntity.getYearb());
-            entity.get().setPages(bookEntity.getPages());
-            entity.get().setCopies(bookEntity.isCopies());
-            entity.get().setIsIssued(bookEntity.getIsIssued());
-            entity.get().setCategoryId(bookEntity.getCategoryId());
-            System.out.println(bookEntity.getAuthor());
-            return bookRepository.save(entity.get());
+            bookEntity.setId(entity.get().getId());
+            return bookRepository.save(bookEntity);
         }
         return null;
     }

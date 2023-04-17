@@ -1,9 +1,16 @@
 package be.technobel.emolibspring.model.entity;
 
+import be.technobel.emolibspring.helper.CommonService;
 import jakarta.persistence.*;
+import lombok.Data;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Table(name = "authors")
 @Entity
+@Data
 public class AuthorEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,27 +23,15 @@ public class AuthorEntity {
     @Column(name = "slug")
     private String slug;
 
-    public Long getId() {
-        return id;
-    }
+    @ManyToMany(mappedBy = "authors")
+    private Set<BookEntity> books = new HashSet<>();
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
+    public AuthorEntity(String name) {
         this.name = name;
+        this.slug= CommonService.convertStringToSlug(name);
     }
 
-    public String getSlug() {
-        return slug;
-    }
+    public AuthorEntity() {
 
-    public void setSlug(String slug) {
-        this.slug = slug;
     }
 }

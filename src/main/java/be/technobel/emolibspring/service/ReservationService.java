@@ -8,12 +8,12 @@ import java.util.Optional;
 public interface ReservationService {
     ReservationEntity create(ReservationEntity userEntity);
 
-    ReservationEntity update(Long id, ReservationEntity userEntity);
+//    ReservationEntity update(Long id, ReservationEntity userEntity);
 
     void delete(Long id);
 
     List<ReservationEntity> getAll();
 
     Optional<ReservationEntity> findById(Long id);
-
+    public List<ReservationEntity> getReservationByUserId(Long userId);
 }

@@ -5,13 +5,17 @@ import be.technobel.emolibspring.converter.ConvertStatusCommonEnum;
 import be.technobel.emolibspring.helper.CommonService;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "books")
+@Data
 public class BookEntity {
 
     @Id
@@ -28,8 +32,13 @@ public class BookEntity {
     @Column(name = "slug")
     private String slug;
 
-    @Column(name = "author")
-    private String author;
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "author_book",
+            joinColumns = { @JoinColumn(name = "book_id") },
+            inverseJoinColumns = { @JoinColumn(name = "author_id") }
+    )
+    private Set<AuthorEntity> authors = new HashSet<>();
 
     @Column(name = "subject",columnDefinition="TEXT")
     private String subject;
@@ -48,8 +57,10 @@ public class BookEntity {
     @Convert(converter = ConvertStatusCommonEnum.class)
     private StatusEnum isIssued;
 
-    @Column(name = "category_id")
-    private Long categoryId;
+//    Quan he
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    private CategoryEntity category;
 
     @Column(name = "created_at")
     @CreationTimestamp
@@ -61,7 +72,15 @@ public class BookEntity {
     public BookEntity() {
     }
 
-    public BookEntity(String ibsn, String title, String author, String subject, Date yearb, Integer pages, boolean copies, StatusEnum isIssued, Long categoryId) {
+    public BookEntity(String ibsn,
+                      String title,
+                      Set<AuthorEntity> authors,
+                      String subject,
+                      Date yearb,
+                      Integer pages,
+                      boolean copies,
+                      StatusEnum isIssued,
+                      CategoryEntity category) {
         this.ibsn = ibsn;
         this.title = title;
         this.slug = CommonService.convertStringToSlug(title);
@@ -70,99 +89,7 @@ public class BookEntity {
         this.pages = pages;
         this.copies = copies;
         this.isIssued = isIssued;
-        this.categoryId = categoryId;
-        this.author = author;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getIbsn() {
-        return ibsn;
-    }
-
-    public void setIbsn(String ibsn) {
-        this.ibsn = ibsn;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String authorId) {
-        this.author = author;
-    }
-
-    public String getSubject() {
-        return subject;
-    }
-
-    public void setSubject(String subject) {
-        this.subject = subject;
-    }
-
-    public Date getYearb() {
-        return yearb;
-    }
-
-    public void setYearb(Date yearb) {
-        this.yearb = yearb;
-    }
-
-    public Integer getPages() {
-        return pages;
-    }
-
-    public void setPages(Integer pages) {
-        this.pages = pages;
-    }
-
-    public boolean getCopies() {
-        return copies;
-    }
-
-    public StatusEnum getIsIssued() {
-        return isIssued;
-    }
-
-    public void setIsIssued(StatusEnum isIssued) {
-        this.isIssued = isIssued;
-    }
-
-    public String getSlug() {
-        return slug;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
-    }
-
-    public boolean isCopies() {
-        return copies;
-    }
-
-    public void setCopies(boolean copies) {
-        this.copies = copies;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
+        this.category=category;
+        this.authors = authors;
     }
 }

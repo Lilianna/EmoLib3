@@ -2,87 +2,52 @@ package be.technobel.emolibspring.model.entity;
 
 
 import jakarta.persistence.*;
+import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.util.*;
 
 @Entity
+@Data
 @Table(name = "borrowings")
 public class BorrowingEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Long id;
 
+    //người đặt
     @Column(name = "borrower_id")
-    private int borrowerId;
+    private Long borrowerId;
 
     @Column(name = "issuer")
-    private int issuer;
+    private Long issuer;
 
     @Column(name = "issue_date")
-    private String issueDate;
+    @CreationTimestamp
+    private Date createDate;
 
     @Column(name = "receiver")
     private String receiver;
 
     @Column(name = "return_date")
-    private String returnDate;
+    private Date returnDate;
 
     @Column(name = "fine_amount")
     private String fineAmount;
 
-    public int getId() {
-        return id;
-    }
+    @ElementCollection
+    @Column(name="list_book")
+    private List<Long> listBook = new ArrayList<Long>();
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public BorrowingEntity(){}
 
-    public int getBorrowerId() {
-        return borrowerId;
-    }
-
-    public void setBorrowerId(int borrowerId) {
+    public BorrowingEntity(Long borrowerId, Long issuer, String receiver, Date returnDate, String fineAmount, List<Long> listBook) {
         this.borrowerId = borrowerId;
-    }
-
-    public int getIssuer() {
-        return issuer;
-    }
-
-    public void setIssuer(int issuer) {
         this.issuer = issuer;
-    }
-
-    public String getIssueDate() {
-        return issueDate;
-    }
-
-    public void setIssueDate(String issueDate) {
-        this.issueDate = issueDate;
-    }
-
-    public String getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(String receiver) {
         this.receiver = receiver;
-    }
-
-    public String getReturnDate() {
-        return returnDate;
-    }
-
-    public void setReturnDate(String returnDate) {
         this.returnDate = returnDate;
-    }
-
-    public String getFineAmount() {
-        return fineAmount;
-    }
-
-    public void setFineAmount(String fineAmount) {
         this.fineAmount = fineAmount;
+        this.listBook = listBook;
     }
-
 }

@@ -12,17 +12,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/category")
 @CrossOrigin
 @RequiredArgsConstructor
 public class CategoryController {
-    private CategoryServiceImpl categoryServiceImpl;
-
-    @Autowired
-    public CategoryController(CategoryServiceImpl categoryServiceImpl) {
-        this.categoryServiceImpl = categoryServiceImpl;
-    }
+    private final CategoryServiceImpl categoryServiceImpl;
 
     @GetMapping("")
     public ResponseEntity getListBooking() {
@@ -32,12 +30,12 @@ public class CategoryController {
     @PostMapping("/create")
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ResponseEntity createBooking(@RequestBody @Valid CreateCategoryForm categoryDTO) {
+    public ResponseEntity createBooking(@RequestBody @Valid CreateCategoryForm categoryForm) {
         CategoryEntity categoryEntity = new CategoryEntity(
-                categoryDTO.getName()
+                categoryForm.getName()
         );
-        CategoryEntity categoryInfo = categoryServiceImpl.create(categoryEntity);
-        return Response.setResponse(true, HttpStatus.OK, categoryInfo);
+
+        return Response.setResponse(true, HttpStatus.OK, categoryServiceImpl.create(categoryEntity));
     }
 
     @GetMapping("/{id}")

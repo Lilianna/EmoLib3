@@ -27,13 +27,13 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationRepository.save(reservationEntity);
     }
 
-    @Override
-    public ReservationEntity update(Long id, ReservationEntity reservationEntity) {
-        reservationEntity.setId(id);
-        reservationEntity.setDeadline(reservationEntity.getDeadline());
-        this.reservationRepository.save(reservationEntity);
-        return reservationEntity;
-    }
+//    @Override
+//    public ReservationEntity update(Long id, ReservationEntity reservationEntity) {
+//        reservationEntity.setId(id);
+//        reservationEntity.setDeadline(reservationEntity.getDeadline());
+//        this.reservationRepository.save(reservationEntity);
+//        return reservationEntity;
+//    }
 
     @Override
     public void delete(Long id) {
@@ -49,7 +49,7 @@ public class ReservationServiceImpl implements ReservationService {
     public Optional<ReservationEntity> findById(Long id) {
         return reservationRepository.findById(id);
     }
-
+    @Override
     public List<ReservationEntity> getReservationByUserId(Long userId) {
         return reservationRepository.getByUserId(userId);
     }
